@@ -69,6 +69,7 @@
   display: block;
   width: 100%;
   height: 100%;
+  will-change: filter;
 }
 
 .preview-error {
@@ -501,6 +502,15 @@ button:active:not(:disabled) {
   .mobile-page {
     --mobile-safe-area-height: max(env(safe-area-inset-bottom), 18px);
     --keyboard-height: 0px !important;
+  }
+
+  .later-card-scroll .mobile-scroll {
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+  }
+
+  .later-card-scroll .mobile-scrollbar {
+    display: none !important;
   }
 
   .later-card-main {

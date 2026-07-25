@@ -105,6 +105,45 @@ function drawFittedText(
   context.shadowOffsetY = 0;
 }
 
+function applyHueRotation(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  degrees: number,
+) {
+  if (degrees === 0) return;
+
+  const radians = degrees * (Math.PI / 180);
+  const cosine = Math.cos(radians);
+  const sine = Math.sin(radians);
+  const matrix = [
+    0.213 + cosine * 0.787 - sine * 0.213,
+    0.715 - cosine * 0.715 - sine * 0.715,
+    0.072 - cosine * 0.072 + sine * 0.928,
+    0.213 - cosine * 0.213 + sine * 0.143,
+    0.715 + cosine * 0.285 + sine * 0.14,
+    0.072 - cosine * 0.072 - sine * 0.283,
+    0.213 - cosine * 0.213 - sine * 0.787,
+    0.715 - cosine * 0.715 + sine * 0.715,
+    0.072 + cosine * 0.928 + sine * 0.072,
+  ];
+
+  const imageData = context.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const red = pixels[index];
+    const green = pixels[index + 1];
+    const blue = pixels[index + 2];
+
+    pixels[index] = red * matrix[0] + green * matrix[1] + blue * matrix[2];
+    pixels[index + 1] = red * matrix[3] + green * matrix[4] + blue * matrix[5];
+    pixels[index + 2] = red * matrix[6] + green * matrix[7] + blue * matrix[8];
+  }
+
+  context.putImageData(imageData, 0, 0);
+}
+
 async function renderCard(
   canvas: HTMLCanvasElement,
   backgroundSrc: string,
@@ -116,7 +155,7 @@ async function renderCard(
 ) {
   canvas.width = width;
   canvas.height = height;
-  const context = canvas.getContext("2d", { willReadFrequently: false });
+  const context = canvas.getContext("2d");
   if (!context) return;
 
   const [image] = await Promise.all([
@@ -125,10 +164,8 @@ async function renderCard(
   ]);
 
   context.clearRect(0, 0, width, height);
-  context.save();
-  context.filter = `hue-rotate(${hue}deg)`;
   drawCover(context, image, width, height);
-  context.restore();
+  applyHueRotation(context, width, height, hue);
   drawFittedText(context, text, textColor, width, height);
 }
 
@@ -187,7 +224,7 @@ export default function Prototype() {
     renderCard(
       canvas,
       selectedBackground.src,
-      hue,
+      0,
       text,
       textColor,
       PREVIEW_WIDTH,
@@ -203,7 +240,7 @@ export default function Prototype() {
     return () => {
       active = false;
     };
-  }, [hue, selectedBackground.src, text, textColor]);
+  }, [selectedBackground.src, text, textColor]);
 
   useEffect(
     () => () => {
@@ -300,6 +337,7 @@ export default function Prototype() {
               className="card-preview"
               data-testid="card-canvas"
               aria-label={`Preview with ${selectedBackground.label} background`}
+              style={{ filter: `hue-rotate(${hue}deg)` }}
             />
             {renderError && <p className="preview-error">{renderError}</p>}
           </div>
