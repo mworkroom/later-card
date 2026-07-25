@@ -21,7 +21,10 @@
 }
 
 .later-card-main {
+  width: 100%;
+  max-width: 430px;
   min-height: 100%;
+  margin: 0 auto;
   padding: 66px 20px calc(var(--mobile-safe-area-height) + 30px);
   background: var(--later-white);
   color: var(--later-ink);
@@ -443,76 +446,76 @@ button:active:not(:disabled) {
 }
 
 /*
- * The bundled mobile runtime draws a phone shell for desktop design review.
- * On a real mobile viewport, remove that preview chrome and let Later Card
- * occupy the device viewport directly.
+ * The bundled runtime includes a device simulator for design review.
+ * Later Card is the product itself, so always remove the simulator chrome
+ * and render the app directly in the browser viewport.
  */
+.phone-stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  padding: 0;
+}
+
+.device-menu-bar,
+.phone-bezel,
+.device-camera,
+.status-bar,
+.home-indicator-svg,
+.android-navigation-bar,
+.keyboard-dock,
+.mobile-cursor {
+  display: none !important;
+}
+
+.phone-scale-box {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100dvh;
+}
+
+.phone-device {
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100dvh;
+  transform: none !important;
+}
+
+.device-screen {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden;
+  border-radius: 0 !important;
+  box-shadow: none;
+  cursor: auto !important;
+  user-select: auto;
+}
+
+.device-screen,
+.device-screen * {
+  cursor: auto !important;
+}
+
+.mobile-page {
+  --mobile-safe-area-height: max(env(safe-area-inset-bottom), 18px);
+  --keyboard-height: 0px !important;
+}
+
+.later-card-scroll .mobile-scroll {
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+}
+
+.later-card-scroll .mobile-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 600px) {
-  .phone-stage {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 100dvh;
-    padding: 0;
-  }
-
-  .device-menu-bar,
-  .phone-bezel,
-  .device-camera,
-  .status-bar,
-  .home-indicator-svg,
-  .android-navigation-bar,
-  .keyboard-dock,
-  .mobile-cursor {
-    display: none !important;
-  }
-
-  .phone-scale-box {
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100dvh;
-  }
-
-  .phone-device {
-    position: relative;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100dvh;
-    transform: none !important;
-  }
-
-  .device-screen {
-    position: relative !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100dvh !important;
-    overflow: hidden;
-    border-radius: 0 !important;
-    box-shadow: none;
-    cursor: auto !important;
-    user-select: auto;
-  }
-
-  .device-screen,
-  .device-screen * {
-    cursor: auto !important;
-  }
-
-  .mobile-page {
-    --mobile-safe-area-height: max(env(safe-area-inset-bottom), 18px);
-    --keyboard-height: 0px !important;
-  }
-
-  .later-card-scroll .mobile-scroll {
-    touch-action: pan-y;
-    overscroll-behavior-y: contain;
-  }
-
-  .later-card-scroll .mobile-scrollbar {
-    display: none !important;
-  }
-
   .later-card-main {
     min-height: 100dvh;
     padding-top: calc(env(safe-area-inset-top) + 20px);
