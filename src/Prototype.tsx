@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import {
   CheckIcon,
   Cross2Icon,
@@ -187,6 +193,10 @@ function slugify(text: string) {
   return slug || "later-card";
 }
 
+function keepPointerInApp(event: ReactPointerEvent<HTMLElement>) {
+  event.stopPropagation();
+}
+
 export default function Prototype() {
   const keyboard = useKeyboard();
   const base = import.meta.env.BASE_URL;
@@ -324,7 +334,16 @@ export default function Prototype() {
 
   return (
     <MobileScroll className="app-screen later-card-scroll">
-      <main className="later-card-main" aria-labelledby="later-card-title">
+      <main
+        className="later-card-main"
+        aria-labelledby="later-card-title"
+        onPointerEnter={keepPointerInApp}
+        onPointerMove={keepPointerInApp}
+        onPointerDown={keepPointerInApp}
+        onPointerUp={keepPointerInApp}
+        onPointerCancel={keepPointerInApp}
+        onPointerLeave={keepPointerInApp}
+      >
         <header className="app-header">
           <p className="app-kicker">COLOR YOUR TIME</p>
           <h1 id="later-card-title">Later Card</h1>
@@ -364,6 +383,7 @@ export default function Prototype() {
                 max="180"
                 step="1"
                 value={hue}
+                data-scroll-drag="ignore"
                 onChange={(event) => setHue(Number(event.target.value))}
               />
               <output htmlFor="hue-range">{hue > 0 ? "+" : ""}{hue}°</output>
@@ -489,13 +509,13 @@ export default function Prototype() {
         </section>
 
         <section className="action-section" aria-label="Export actions">
-          <button className="primary-action" type="button" onClick={downloadPng}>
-            <DownloadIcon aria-hidden="true" />
-            Save PNG
-          </button>
-          <button className="secondary-action" type="button" onClick={sharePng}>
+          <button className="primary-action" type="button" onClick={sharePng}>
             <Share2Icon aria-hidden="true" />
             Share
+          </button>
+          <button className="secondary-action" type="button" onClick={downloadPng}>
+            <DownloadIcon aria-hidden="true" />
+            Save PNG
           </button>
           <p className="status-message" role="status" aria-live="polite">{status}</p>
         </section>
